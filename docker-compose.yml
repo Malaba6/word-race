@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:13.2
+    environment:
+      - POSTGRES_USER=tts
+      - POSTGRES_PASSWORD=tts
+      - POSTGRES_DB=tts
+      - NODE_ENV=development
+    ports:
+      - 5430:5432
+    volumes:
+      - ./db/data/postgres:/var/lib/postgresql/data
+
+  api:
+    build: ./api
+    depends_on:
+      - db
+    environment: 
+      # - PORT=$API_PORT
+      # - PGHOST=db
+      # - PGPORT=$DB_PORT
+      # - PGUSER=$DB_USER
+      # - PGPASSWORD=$DB_PASSWORD
+      # - PGDATABASE=$DB_NAME
+      - DB_PORT=5432
+      - DB_USER=tts
+      - DB_PASSWORD=tts
+      - DB_NAME=tts
+      - DB_HOST=db
+      - DB_HOST_TEST=db_test
+    ports:
+      - 3002:3002
+    working_dir: /api
+    volumes:
+      - ./api:/api
+      - /api/node_modules
+    command: sh -c "yarn watch:dev"
+    restart: on-failure
+
+  app:
+    build: ./app
+    ports:
+      - 8081:8081
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+      - /app/.next
+    stdin_open: true
+    command: yarn dev
+
+  test_api:
+    build: ./api
+    environment:
+      - NODE_ENV=test
+      - POSTGRES_DB=tts_test
+    command: yarn test:coverage

@@ -1,0 +1,26 @@
+.nav {
+  width: 100%;
+  padding: 1em 0.5em;
+  border: thin solid red;
+  top: 0;
+  left: 0;
+  background: #C4C4C4;
+}
+
+.logotext {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2196f3;
+}
+
+.logoframe {
+  /* width: 100px; */
+  align-items: center;
+  border: solid #C4C4C4 thin;
+}
+
+@media only screen and (max-width: 300px) {
+  .logotext {
+    font-size: 0.6rem;
+  }
+}
