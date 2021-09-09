@@ -1,16 +1,16 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/forbid-prop-types */
 import { useState } from 'react'
 import Proptypes from 'prop-types'
 import {
   AppBar, Toolbar, CssBaseline, useScrollTrigger,
   Slide, Button, makeStyles, Grid, IconButton,
-  Drawer, Link, MenuItem, useTheme, Divider,
-  ListItemText, List, ListItem, ListItemIcon
+  Drawer, Divider, ListItemText, List, ListItem,
+  ListItemIcon
 } from '@material-ui/core'
 import {
   Menu as MenuIcon,
-  Person as PersonIcon,
-  ChevronLeft, Info,
-  ChevronRight, DirectionsCar
+  ChevronLeft, Info, DirectionsCar
 } from '@material-ui/icons'
 // import RouterLink from "next/Link"
 import Image from 'next/image'
@@ -19,7 +19,7 @@ import logo from '../../../../public/logo.png'
 import { useViewport } from '../hooks/viewport'
 import { AuthButton } from '../utils/Buttons'
 import { UserMenu } from '../utils/userMenu'
-import theme from '../../../../styles/theme'
+import {theme} from '../../../../styles/theme'
 
 const HideOnScroll = ({ children, window }) => {
   const trigger = useScrollTrigger({ target: window });
@@ -29,6 +29,13 @@ const HideOnScroll = ({ children, window }) => {
 }
 const useStyles = makeStyles(() => (
   {
+    root: {
+      width: '100%',
+      zIndex: '1400',
+      '@media (max-width: 900px)': {
+        zIndex: '1100'
+      }
+    },
     logoTextWrapper: {
       paddingLeft: '0.5em',
       top: 0,
@@ -50,6 +57,7 @@ const useStyles = makeStyles(() => (
     toolBar: {
       display: 'flex',
       justifyContent: 'space-between',
+      // zIndex: '1400'
     },
     logoFrame: {
       width: '15em',
@@ -81,10 +89,11 @@ const useStyles = makeStyles(() => (
     drawer: {
       width: '70%',
       flexShrink: 0,
+      zIndex: '1500'
     },
     drawerPaper: {
       width: '70%',
-      background: theme.palette.primary.secondary,
+      background: theme.palette.secondary.secondary,
       color: '#fff'
     },
     drawerHeader: {
@@ -103,9 +112,8 @@ const useStyles = makeStyles(() => (
 export const Nav = (props) => {
   const {
     menuButton, toolBar, wRaceLogo, logoFrame,
-    authButton, drawerContainer, mobileOption,
     logoTextWrapper, drawer, drawerPaper,
-    drawerHeader, fontSizeText
+    drawerHeader, fontSizeText, root
    } = useStyles()
 
   const headers = [
@@ -134,8 +142,7 @@ export const Nav = (props) => {
   const { isDrawerOpen } = state;
   const isMobileView = useViewport();
 
-  const avatar = () => {
-    return <Grid
+  const avatar = () => <Grid
       container
       alignItems='flex-start'
       className={logoFrame}>
@@ -147,20 +154,39 @@ export const Nav = (props) => {
             src={logo} />
         </div>
       </Grid>
-      <Grid item xs={9} className={logoTextWrapper} alignItems='flex-start'>
+      <Grid item xs={9} className={logoTextWrapper}>
         <Grid className={s.logotext}>
-          {'WORD RACE'}
+          WORD RACE
         </Grid>
       </Grid>
     </Grid>
-  }
+  
+  const getMenuButtons = () => <div>
+      {headers.map(({label, href}) => {
+        switch(label) {
+          case 'Login':
+            return <AuthButton key={label} label='Login' />
+          case 'Sign Up':
+            return <AuthButton key={label} label='Sign Up' />
+          default:
+            return <Button disableRipple disableFocusRipple key={label}
+              {...{
+                color: 'inherit',
+                className: menuButton,
+                to: href,
+                // component: RouterLink
+              }}>
+                {label}
+            </Button>
+        }
+      })}
+      <UserMenu />
+    </div>
 
-  const displayDesktop = () => {
-    return <Toolbar className={toolBar}>
+  const displayDesktop = () => <Toolbar className={toolBar}>
         {avatar()}
         {getMenuButtons()}
       </Toolbar>
-  }
 
   const displayMobile = () => {
     const handleDrawerOpen = () =>
@@ -196,7 +222,7 @@ export const Nav = (props) => {
           <UserMenu />
           <Divider />
           <List>
-            {headers.map(({label, href}) =>{
+            {headers.map(({label}) =>{
               switch(label) {
               case 'Login':
                 return <ListItem key={label}>
@@ -224,34 +250,10 @@ export const Nav = (props) => {
     </Toolbar>
   }
 
-  const getMenuButtons = () => {
-    return <div>
-      {headers.map(({label, href}) => {
-        switch(label) {
-          case 'Login':
-            return <AuthButton label='Login' />
-          case 'Sign Up':
-            return <AuthButton label='Sign Up' />
-          default:
-            return <Button disableRipple disableFocusRipple key={label}
-              {...{
-                color: 'inherit',
-                className: menuButton,
-                to: href,
-                // component: RouterLink
-              }}>
-                {label}
-            </Button>
-        }
-      })}
-      <UserMenu />
-    </div>
-  }
-
   return <>
     <CssBaseline />
     <HideOnScroll  {...props}>
-      <AppBar>
+      <AppBar className={root}>
         {isMobileView
           ? displayMobile()
           : displayDesktop()}

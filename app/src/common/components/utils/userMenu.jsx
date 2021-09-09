@@ -5,10 +5,10 @@ import {
   Grid, Avatar, List, ListItem
  } from '@material-ui/core'
 import { Person as PersonIcon, AccountCircleRounded,
-  ExitToApp, AccountCircle
+  ExitToApp
 } from '@material-ui/icons'
-import PropTypes from 'prop-types'
-import useViewport from '../hooks/viewport'
+// import PropTypes from 'prop-types'
+import { useViewport } from '../hooks/viewport'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,15 +85,15 @@ export const UserMenu = ({ userName='Guest', avatar }) => {
     <>
       <Grid
         container
-        direction='column'
-        spacing={3}
-        justifyContent='center'>
-        <Grid justifyContent='center' className={classes.profileWraper}>
+        direction='column'>
+        <Grid container item justifyContent='center' className={classes.profileWraper}>
           {avatar
             ? <Avatar alt='Avatar' src={avatar} />
-            : <AccountCircleRounded fontSize='large' classes={{fontSizeLarge: classes.menuIconSize}} /> }
+            : <AccountCircleRounded
+              fontSize='large'
+              classes={{fontSizeLarge: classes.menuIconSize}} /> }
         </Grid>
-        <Grid justifyContent='center' className={classes.profileWraper}>
+        <Grid container item justifyContent='center' className={classes.profileWraper}>
           <Typography>
             {userName}
           </Typography>
@@ -102,7 +102,7 @@ export const UserMenu = ({ userName='Guest', avatar }) => {
       <List>
         <ListItem>
           <ListItemIcon>
-            <PersonIcon fontSize='large' color='primary' />
+            <PersonIcon fontSize='medium' color='primary' />
           </ListItemIcon>
           <ListItemText
             classes={{primary: classes.menuFontSize}}
@@ -110,7 +110,7 @@ export const UserMenu = ({ userName='Guest', avatar }) => {
         </ListItem>
         <ListItem>
           <ListItemIcon>
-            <ExitToApp fontSize='large' color='primary' />
+            <ExitToApp fontSize='medium' color='primary' />
           </ListItemIcon>
           <ListItemText
             classes={{primary: classes.menuFontSize}}
@@ -120,3 +120,5 @@ export const UserMenu = ({ userName='Guest', avatar }) => {
     </>
   return isMobileView ? getMobileView : getDeskTopView
 }
+
+export default UserMenu

@@ -4,11 +4,9 @@ export const useViewport = () => {
   const [isMobileView, setIsMobileView] = useState(false)
 
   useEffect(() => {
-    const setResponsiveness = () => {
-      return window.innerWidth < 900
+    const setResponsiveness = () => window.innerWidth < 900
         ? setIsMobileView(true)
         : setIsMobileView(false)
-    }
     setResponsiveness()
     window.addEventListener('resize', () => setResponsiveness())
     return () => {
