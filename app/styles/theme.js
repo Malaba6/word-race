@@ -12,7 +12,7 @@ export const theme = createTheme({
     },
     text: {
       secondary: 'rgba(255, 255, 255, 0.7)',
-      menu: '1.5rem'
+      menu: '1.1rem'
     },
     linear: {
       main: 'linear-gradient(180deg,rgba(0,0,0,.9), rgba(100,0,0,0))',
