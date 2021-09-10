@@ -1,0 +1,20 @@
+setup:
+  addons: 
+    - plan: heroku-postgresql
+      as: DATABASE
+  config:
+    DATABASE_URL: $DATABASE_URL
+
+build:
+  docker:
+    worker: api/Dockerfile.worker
+    web: app/Dockerfile.web
+
+run:
+  worker:
+    command:
+      - yarn start
+    image: worker
+  web:
+    command:
+      - yarn start
