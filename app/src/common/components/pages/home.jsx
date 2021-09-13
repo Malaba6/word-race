@@ -13,15 +13,14 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     border: 'none',
     boxShadow: 'none',
-    height: '100vh',
-    
+    height: '100vh', 
   },
   callToAction: {
     height: '100vh',
     border: 'none',
     boxShadow: 'none'
   },
-  mainrapper: {
+  mainWrapper: {
     padding: theme.spacing(6),
     '@media (max-width: 900px)': {
       padding: theme.spacing(0,1)
@@ -81,7 +80,7 @@ export const Home = () => {
   return <main className={classes.content}>
     <div className={s.homeWrapper}>
       <Grid container item
-        className={classes.mainrapper}>
+        className={classes.mainWrapper}>
         <Grid
           item
           direction='column' xs={12} sm={12} md={8}

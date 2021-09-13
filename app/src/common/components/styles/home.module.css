@@ -3,8 +3,46 @@
 }
 
 .background {
-  background: url(../../../../public/back_mob.svg);
+  /* background: url(../../../../public/back_mob.svg); */
   background-repeat: no-repeat;
   background-size: 100% 100%;
   height: 900px;
+}
+
+.svg {
+  background: url('../../../../public/parallelo.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 200px;
+  border: solid red thin;
+  height: 15em;
+}
+
+.rectButton {
+  background: url('../../../../public/rectangle.svg');
+  width: 11em;
+  margin: 0 auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* width: fit-content; */
+  /* border: solid thin red; */
+  padding: 0.7em;
+  height: 6em;
+  color: #fff;
+}
+
+.trapButton {
+  background: url('../../../../public/trapezoid.svg');
+  width: 11em;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.paraButton {
+  display: flex;
+  align-content: center;
+  background: url('../../../../public/parallelo.svg');
+  width: 11em;
+  background-size: cover;
+  background-repeat: no-repeat;
 }

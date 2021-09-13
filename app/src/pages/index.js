@@ -1,4 +1,4 @@
-import HomePage from '../common/components/home/Home'
+import HomePage from '../common/components/pages/home'
 import {AppBarLayout} from '../layout/AppBarLayout'
 
 export default function Home() {
