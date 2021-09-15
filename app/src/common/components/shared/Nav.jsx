@@ -1,25 +1,27 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/forbid-prop-types */
 import { useState } from 'react'
-import Proptypes from 'prop-types'
+import PropTypes from 'prop-types'
 import {
   AppBar, Toolbar, CssBaseline, useScrollTrigger,
   Slide, Button, makeStyles, Grid, IconButton,
   Drawer, Divider, ListItemText, List, ListItem,
   ListItemIcon
 } from '@material-ui/core'
+import Link from 'next/link'
 import {
   Menu as MenuIcon,
   ChevronLeft, Info, DirectionsCar
 } from '@material-ui/icons'
+import clsx from 'clsx'
 // import RouterLink from "next/Link"
 import Image from 'next/image'
 import * as s from '../styles/nav.module.css'
 import logo from '../../../../public/logo.png'
-import { useViewport } from '../hooks/viewport'
 import { AuthButton } from '../utils/Buttons'
 import { UserMenu } from '../utils/userMenu'
 import {theme} from '../../../../styles/theme'
+import { headers } from '../utils/constants'
 
 const HideOnScroll = ({ children, window }) => {
   const trigger = useScrollTrigger({ target: window });
@@ -27,6 +29,7 @@ const HideOnScroll = ({ children, window }) => {
     {children}
   </Slide>
 }
+
 const useStyles = makeStyles(() => (
   {
     root: {
@@ -105,166 +108,177 @@ const useStyles = makeStyles(() => (
     },
     fontSizeText: {
       fontSize: theme.palette.text.menu
+    },
+    deskMenu: {
+      '@media (max-width: 900px)': {
+        display: 'none'
+      }
+    },
+    mobileMenu: {
+      display: 'none',
+      '@media (max-width: 900px)': {
+        display: 'flex'
+      }
     }
   }
 ))
 
-export const Nav = (props) => {
-  const {
-    menuButton, toolBar, wRaceLogo, logoFrame,
-    logoTextWrapper, drawer, drawerPaper,
-    drawerHeader, fontSizeText, root
-   } = useStyles()
+const GetMenuButtons = ({classes}) => <div
+  className={classes.deskMenu}>
+  {headers.map(({label, href}) => {
+    switch(label) {
+      case 'Login':
+        return <AuthButton key={label} label='Login' />
+      case 'Sign Up':
+        return <AuthButton key={label} label='Sign Up' />
+      default:
+        return <Link href={href} passHref>
+          <Button disableRipple disableFocusRipple key={label}
+            {...{
+              color: 'inherit',
+              className: classes.menuButton,
+            }}>
+              {label}
+          </Button>
+        </Link>
+      }
+  })}
+  <UserMenu />
+</div>
 
-  const headers = [
-    {
-      label: 'About',
-      href: '/about'
-    },
-    {
-      label: 'Race',
-      href: '/race'
-    },
-    {
-      label: 'Sign Up',
-      href: '/signup',
-    },
-    {
-      label: 'Login',
-      href: '/login',
-    }
-  ]
-
-  const [state, setState] = useState({
-    isDrawerOpen: false
-  })
-
-  const { isDrawerOpen } = state;
-  const isMobileView = useViewport();
-
-  const avatar = () => <Grid
-      container
-      alignItems='flex-start'
-      className={logoFrame}>
-      <Grid item xs={3}>
-        <div className={wRaceLogo}>
-          <Image
-            alt='Logo'
-            className={s.logoImg}
-            src={logo} />
-        </div>
-      </Grid>
-      <Grid item xs={9} className={logoTextWrapper}>
-        <Grid className={s.logotext}>
-          WORD RACE
-        </Grid>
-      </Grid>
-    </Grid>
-  
-  const getMenuButtons = () => <div>
-      {headers.map(({label, href}) => {
-        switch(label) {
-          case 'Login':
-            return <AuthButton key={label} label='Login' />
-          case 'Sign Up':
-            return <AuthButton key={label} label='Sign Up' />
-          default:
-            return <Button disableRipple disableFocusRipple key={label}
-              {...{
-                color: 'inherit',
-                className: menuButton,
-                to: href,
-                // component: RouterLink
-              }}>
-                {label}
-            </Button>
-        }
-      })}
-      <UserMenu />
+const Avatar = ({ classes }) => <Grid
+  container
+  alignItems='flex-start'
+  className={classes.logoFrame}>
+  <Grid item xs={3}>
+    <div className={classes.wRaceLogo}>
+      <Image
+        alt='Logo'
+        className={s.logoImg}
+        src={logo} />
     </div>
+  </Grid>
+  <Grid item xs={9} className={classes.logoTextWrapper}>
+    <Grid className={s.logotext}>
+      WORD RACE
+    </Grid>
+  </Grid>
+</Grid>
 
-  const displayDesktop = () => <Toolbar className={toolBar}>
-        {avatar()}
-        {getMenuButtons()}
-      </Toolbar>
+const DisplayDesktop = () => {
+  const classes = useStyles()
 
-  const displayMobile = () => {
-    const handleDrawerOpen = () =>
-      setState(prev => ({...prev, isDrawerOpen: true}))
-    const handleDrawerClose = () => 
-      setState(prev => ({...prev, isDrawerOpen: false}))
+  return <Toolbar className={clsx(classes.toolBar, classes.deskMenu)}>
+    <Avatar classes={classes} />
+    <GetMenuButtons classes={classes} />
+  </Toolbar>
+}
 
-    return <Toolbar className={toolBar}>
-      {avatar()}
-      <IconButton
-        {...{
-          edge: 'end',
-          color: 'inherit',
-          'aria-label': 'menu',
-          'aria-haspopup': 'true',
-          onClick: handleDrawerOpen
-        }}>
-        <MenuIcon />
-      </IconButton>
-      <Drawer className={drawer}
-        classes={{
-          paper: drawerPaper,
-        }}
-        {...{
-          anchor: 'right',
-          open: isDrawerOpen,
-          onClose: handleDrawerClose
-        }}>
-          <div className={drawerHeader}>
-            <ChevronLeft onClick={handleDrawerClose} fontSize='large' />
-          </div>
-          <Divider color='inherit' />
-          <UserMenu />
-          <Divider />
-          <List>
-            {headers.map(({label}) =>{
-              switch(label) {
-              case 'Login':
-                return <ListItem key={label}>
-                    <AuthButton label='Login' />
-                  </ListItem>
-              case 'Sign Up':
-                return <ListItem key={label}>
-                      <AuthButton label='Sign Up' />
-                  </ListItem>
-              default:
-                return <ListItem key={label}>
+const DisplayMobile = ({setState, isDrawerOpen}) => {
+  const classes = useStyles()
+
+  const handleDrawerOpen = () =>
+    setState(prev => ({...prev, isDrawerOpen: true}))
+  const handleDrawerClose = () => 
+    setState(prev => ({...prev, isDrawerOpen: false}))
+
+  return <Toolbar className={clsx(classes.toolBar, classes.mobileMenu)}>
+    <Avatar classes={classes} />
+    <IconButton
+      {...{
+        edge: 'end',
+        color: 'inherit',
+        'aria-label': 'menu',
+        'aria-haspopup': 'true',
+        onClick: handleDrawerOpen
+      }}>
+      <MenuIcon />
+    </IconButton>
+    <Drawer className={classes.drawer}
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+      {...{
+        anchor: 'right',
+        open: isDrawerOpen,
+        onClose: handleDrawerClose
+      }}>
+        <div className={classes.drawerHeader}>
+          <ChevronLeft onClick={handleDrawerClose} fontSize='large' />
+        </div>
+        <Divider color='inherit' />
+        <UserMenu />
+        <Divider />
+        <List>
+          {headers.map(({label, href}) =>{
+            switch(label) {
+            case 'Login':
+              return <ListItem key={label}>
+                  <AuthButton label='Login' />
+                </ListItem>
+            case 'Sign Up':
+              return <ListItem key={label}>
+                    <AuthButton label='Sign Up' />
+                </ListItem>
+            default:
+              return <Link href={href} passHref>
+                <ListItem
+                  component='a'
+                  button
+                  key={label}>
                   <ListItemIcon>
                     {label === 'About'
                       ? <Info color='primary' fontSize='large' />
                       : <DirectionsCar fontSize='large' color='primary' />}
                   </ListItemIcon>
                   <ListItemText
-                    classes={{primary: fontSizeText}}
+                    classes={{primary: classes.fontSizeText}}
                     primary={label} />
                 </ListItem>
-              }
-            })}
-          </List>
-      </Drawer>
-    </Toolbar>
-  }
+              </Link>
+            }
+          })}
+        </List>
+    </Drawer>
+  </Toolbar>
+}
+
+export const Nav = (props) => {
+
+  const { root } = useStyles()
+
+  const [state, setState] = useState({
+    isDrawerOpen: false
+  })
+
+  const { isDrawerOpen } = state;
 
   return <>
     <CssBaseline />
     <HideOnScroll  {...props}>
       <AppBar className={root}>
-        {isMobileView
-          ? displayMobile()
-          : displayDesktop()}
+        <DisplayMobile
+          isDrawerOpen={isDrawerOpen}
+          setState={setState} />
+        <DisplayDesktop />
       </AppBar>
     </HideOnScroll>
   </>
 }
 
 HideOnScroll.propTypes = {
-  children: Proptypes.element.isRequired,
-  window: Proptypes.any
+  children: PropTypes.element.isRequired,
+  window: PropTypes.any
+}
+DisplayMobile.propTypes = {
+  setState: PropTypes.func,
+  isDrawerOpen: PropTypes.bool
+}
+Avatar.propTypes = {
+  classes: PropTypes.objectOf(PropTypes.string)
+}
+GetMenuButtons.propTypes = {
+  classes: PropTypes.objectOf(PropTypes.string)
 }
 
 export default Nav;

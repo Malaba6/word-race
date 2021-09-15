@@ -11,6 +11,8 @@ import {
   Home, ChevronLeft, ChevronRight,
   AccountBox, PersonalVideo
 } from '@material-ui/icons'
+import PropTypes from 'prop-types'
+import { DirectionsRun } from "@mui/icons-material"
 import { useAppContext } from "../../../context/Context"
 
 const useStyles = makeStyles((theme) => ({
@@ -64,10 +66,62 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
+const Item = ({
+  href, primary, tab, selectedTab, onTabChange,
+  Icon
+}) => {
+  const classes = useStyles()
+
+  return <Link href={href || ''} passHref>
+    <ListItem
+      button
+      component='a'
+      classes={{root: clsx({
+        [classes.listItem]: selectedTab===tab
+      }) }}
+      onClick={() => onTabChange(tab)}
+    >
+      <ListItemIcon>
+        <Icon fontSize='medium' color='primary' />
+      </ListItemIcon>
+      <ListItemText
+        classes={{primary: classes.listIconLabels}}
+        primary={primary} />
+    </ListItem>
+  </Link>
+}
+
 export const SideBar = () => {
   const classes = useStyles()
   const [open, setOpen] = useState(true)
   const {tab:SelectedTab, setTab } = useAppContext()
+
+  const tabs = [
+    {
+      href: '/',
+      primary: 'Home',
+      tab: 'home',
+      Icon: Home
+    },
+    {
+      href: '/race',
+      primary: 'Race',
+      tab: 'race',
+      Icon: DirectionsRun
+    },
+    {
+      href: '/profile',
+      primary: 'My Account',
+      tab: 'profile',
+      Icon: AccountBox
+    },
+    {
+      href: '/topscorers',
+      primary: 'Top Scorers',
+      tab: 'topscorers',
+      Icon: PersonalVideo
+    }
+  ]
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -100,52 +154,32 @@ export const SideBar = () => {
       </div>
       <Divider />
       <List>
-        <Link href='/' passHref>
-          <ListItem
-            button
-            component='a'
-            classes={{root: clsx({
-              [classes.listItem]: SelectedTab==='home'
-            }) }}
-            onClick={() => handleTabChange('home')}
-          >
-            <ListItemIcon>
-              <Home fontSize='medium' color='primary' />
-            </ListItemIcon>
-            <ListItemText classes={{primary: classes.listIconLabels}} primary='Home' />
-          </ListItem>
-        </Link>
-        <Link href='/profile' passHref>
-          <ListItem
-            component='a'
-            classes={{root: clsx({
-              [classes.listItem]: SelectedTab==='profile'
-            }) }}
-            onClick={() => handleTabChange('profile')}
-            button>
-            <ListItemIcon>
-              <AccountBox fontSize='medium' color='primary' />
-            </ListItemIcon>
-            <ListItemText classes={{primary: classes.listIconLabels}} primary='My Account' />
-          </ListItem>
-        </Link>
-        <Link href='/account' passHref>
-          <ListItem
-            component='a'
-            classes={{root: clsx({
-              [classes.listItem]: SelectedTab==='account'
-            }) }}
-            onClick={() => handleTabChange('account')}
-            button >
-            <ListItemIcon>
-              <PersonalVideo fontSize='medium' color='primary' />
-            </ListItemIcon>
-            <ListItemText classes={{primary: classes.listIconLabels}} primary='Top Scorers' />
-          </ListItem>
-        </Link>
+        {tabs.map(t => <Item
+          key={t.tab}
+          href={t.href}
+          primary={t.primary}
+          tab={t.tab}
+          selectedTab={SelectedTab}
+          onTabChange={handleTabChange}
+          Icon={t.Icon} />)}
       </List>
     </Drawer>
   </>
+}
+
+Item.propTypes = {
+  href: PropTypes.string,
+  primary: PropTypes.string,
+  tab: PropTypes.string,
+  selectedTab: PropTypes.string,
+  onTabChange: PropTypes.func,
+  Icon: PropTypes.shape({
+    $$typeof: PropTypes.symbol,
+    type: PropTypes.shape({
+      $$typeof: PropTypes.symbol,
+      render: PropTypes.func
+    })
+  })
 }
 
 export default SideBar

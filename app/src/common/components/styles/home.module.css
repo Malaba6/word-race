@@ -10,7 +10,7 @@
 }
 
 .svg {
-  background: url('../../../../public/parallelo.svg');
+  background: #eeeeed;
   background-repeat: no-repeat;
   background-size: contain;
   width: 200px;
@@ -19,22 +19,23 @@
 }
 
 .rectButton {
+  display: flex;
+  /* justify-content: center; */
   background: url('../../../../public/rectangle.svg');
-  width: 11em;
+  width: 10em;
   margin: 0 auto;
   background-repeat: no-repeat;
-  background-size: cover;
-  /* width: fit-content; */
-  /* border: solid thin red; */
+  background-size: contain;
   padding: 0.7em;
-  height: 6em;
+  /* border: solid red thin; */
+  /* height: fit-content; */
   color: #fff;
 }
 
 .trapButton {
   background: url('../../../../public/trapezoid.svg');
-  width: 11em;
-  background-size: cover;
+  width: 10em;
+  background-size: contain;
   background-repeat: no-repeat;
 }
 
@@ -42,7 +43,17 @@
   display: flex;
   align-content: center;
   background: url('../../../../public/parallelo.svg');
-  width: 11em;
-  background-size: cover;
+  width: 10em;
+  background-size: contain;
   background-repeat: no-repeat;
+}
+
+@media only screen and (max-width: 900px) {
+  .rectButton, .trapButton, .paraButton {
+    background-size: cover;
+    padding: 0;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    width: 4.5em;
+  }
 }

@@ -4,9 +4,10 @@ import {
   ListItemText, Typography
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { Info, StarBorder } from '@material-ui/icons'
+import { StarBorder } from '@material-ui/icons'
 import * as s from '../styles/nav.module.css'
 import { Button, AuthButton } from '../utils/Buttons'
+import HowToPlay from '../shared/HowToPlay'
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -88,7 +89,6 @@ export const Home = () => {
           <Grid
             className={s.racetext}
             container item
-            // justifyContent='center'
             >
             WORD RACE
           </Grid>
@@ -173,33 +173,9 @@ export const Home = () => {
             </Card>
           </Grid>
         </Grid>
-        <Grid item xs={4}
-          className={classes.infoWrapper}>
-          <Card className={classes.infoCard}>
-            <Container>
-              <Grid container 
-                className={classes.howToPlayTitle}>
-                <Grid xs={4}>
-                  <Info />
-                </Grid>
-                <Grid container xs={8}>
-                  <Typography variant='h5' component='h6'>
-                    How to play
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Typography>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim debitis quo mollitia cupiditate, natus voluptas architecto dolores quasi aut, veniam, exercitationem recusandae labore rem quibusdam eum impedit iure voluptatum fuga!
-              </Typography>
-              <Typography variant='h6' component='h6'>
-                Bonus
-              </Typography>
-              <Typography>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit ea nesciunt, culpa minima voluptatibus ratione eum quam maiores vel, quas ipsa temporibus explicabo omnis magni! Commodi adipisci aliquid facilis cumque?
-              </Typography>
-            </Container>
-          </Card>
-        </Grid>
+        <HowToPlay
+          xs={4}
+          isHiden />
       </Grid>
     </div>
   </main>

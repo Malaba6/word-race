@@ -1,8 +1,14 @@
 /* eslint-disable no-param-reassign */
-import { Grid, Typography } from "@material-ui/core"
+import {
+  Grid
+} from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 import clsx from 'clsx'
-import { Panel, StackStace, arrayToObject as words} from "../utils/panel"
+import {
+  Panel, StackSpace, arrayToObject as words,
+  KeyBoard, Config
+} from "../utils/panel"
+import { keys, sentences } from "../utils/constants"
 import * as s from '../styles/home.module.css'
 
 
@@ -16,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '10em',
     marginLeft: '3em',
     width: '4em',
-  height: '8em',
+    height: '8em',
   },
   shape: {
     arginTop: '20em',
@@ -28,19 +34,32 @@ const useStyles = makeStyles((theme) => ({
   clipPath: 'polygon(29% 0, 100% 0, 71% 100%, 0% 100%)',
   background: 'red',
   transform: 'rotate(30deg)'
-  // transform: 'perspective(10vw) rotateX(165deg) rotateY(-60deg)'
   },
   boardWrapper: {
     padding: theme.spacing(5),
-    border: 'solid thin red'
+    '@media (max-width: 900px)': {
+      padding: theme.spacing(1),
+    }
   },
   rectButton: {
     width: 'fit-content',
-    border: 'solid thin red'
   },
   levelText: {
     fontSize: '0.8rem',
-    fontWeight: 'bolder'
+    fontWeight: 'bolder',
+    '@media (max-width: 900px)': {
+      fontSize: '0.3rem'
+    }
+  },
+  text: {
+    '@media (max-width: 900px)': {
+      fontSize: '0.7rem'
+    }
+  },
+  howToPlay: {
+    float: 'right'
+    // border: 'solid green thin',
+    // padding: theme.spacing(1)
   },
   stackTrace: {
     margin: '0 auto',
@@ -48,20 +67,127 @@ const useStyles = makeStyles((theme) => ({
     // border: 'solid thin red',
     width: '80%',
     padding: '1em',
-    background: '#eeeeee',
+    paddingTop: 0,
+    paddingRight: 0,
+    background: theme.palette.secondary.menu,
     borderRadius: '5px',
-    boxShadow: theme.shadows[3]
+    minWidth: '300px',
+    boxShadow: theme.shadows[3],
+    '@media (max-width: 900px)': {
+      width: '100%',
+      paddingRight: '0.5em',
+      paddingLeft: '0.5em',
+    }
   },
   wordContainer: {
-    border: 'solid 2px #000',
+    border: `solid 2px ${theme.palette.text.dark}`,
     margin: '0.25em',
     borderRadius: '3px',
-    background: '#fff'
-    // padding: '0.5em'
+    background: '#fff',
+    color: theme.palette.text.dark,
   },
   word: {
-    fontSize: '2em',
-    textTransform: 'uppercase'
+    fontSize: '2rem',
+    textTransform: 'uppercase',
+    '@media (max-width: 900px)': {
+      fontSize: '0.6rem'
+    }
+  },
+  underline: {
+    bottom: '0.5em',
+    position: 'absolute',
+    borderBottom: `solid ${theme.palette.text.dark} 2px`,
+    width: '1rem',
+    '@media (max-width: 900px)': {
+      width: '0.6em',
+      bottom: '0.4em'
+    }
+  },
+  key: {
+    // border: `thin solid ${theme.palette.text.dark}`,
+    borderRadius: '4px',
+    position: 'relative',
+    display: 'flex',
+    boxShadow: theme.shadows[3],
+    color: theme.palette.text.dark,
+    justifyContent: 'center', 
+    padding: '0.5em',
+    paddingLeft: '0.7em',
+    paddingRight: '0.7em',
+    textTransform: 'uppercase',
+    '@media (max-width: 900px)': {
+      borderRadius: '2px',
+    }
+  },
+  keyBoard: {
+    margin: '0 auto',
+    marginTop: '1em',
+    width: '100%',
+    padding: '1.5em',
+    // border: 'solid thin red',
+    '@media (max-width: 900px)': {
+      paddingLeft: 0,
+      paddingRight: 0,
+    }
+  },
+  row: {
+    margin: '0 auto',
+    '@media (max-width: 900px)': {
+      width: '100%',
+      margin: '0 auto',
+    }
+  },
+  keyLabel: {
+    '@media (max-width: 900px)': {
+      fontSize: '1.2rem'
+    }
+  },
+  configWrapper: {
+    background: theme.palette.secondary.menu,
+    borderRadius: '4px',
+    width: '80%',
+    margin: '0 auto',
+    marginBottom: '3em',
+    padding: '1em',
+    boxShadow: theme.shadows[3],
+    '@media (max-width: 900px)': {
+      width: '100%',
+    }
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    width: '80%',
+    '@media (max-width: 900px)': {
+      width: '100%',
+    }
+  },
+  select: {
+    padding: '0.5em',
+  },
+  icon: {
+    color: 'green',
+    paddingBottom: '2em',
+  },
+  selectWrapper: {
+    background: 'rgb(59, 59, 59, 0.5)',
+    borderRadius: '4px',
+    fontSize: '1.2rem',
+  },
+  title: {
+    '@media (max-width: 900px)': {
+      fontSize: '0.9rem',
+      marginTop: '0.2em'
+    },
+    '@media (max-width: 400px)': {
+      display: 'none'
+    }
+  },
+  popover: {
+    width: '50%',
+    '@media (max-width: 400px)': {
+      width: '100%'
+    }
+    // minHeight: '10em'
   }
 }))
 
@@ -87,12 +213,14 @@ export const Race = () => {
       classes
     }
   ]
-  const sentence = 'and and and and and and and and and and and and'
 
   return <main className={classes.content}>
     <div className={classes.boardWrapper}>
+      <Config classes={classes} />
       <Grid container direction='column'>
-        <Grid container direction='row'
+        <Grid
+          container direction='row'
+          className={classes.board}
           justifyContent='center'>
             {items.map(item => <Grid container item xs={4} justifyContent='center'>
               <Panel
@@ -103,14 +231,12 @@ export const Race = () => {
                 classes={item.classes} />
             </Grid>)}
         </Grid>
-        <StackStace
+        <StackSpace
           classes={classes}
-          words={words(sentence)} />
-        <Grid container>
-          <Grid></Grid>
-          <Grid></Grid>
-          <Grid></Grid>
-        </Grid>
+          words={words(sentences[0])} />
+        <KeyBoard
+          keys={keys}
+          classes={classes}/>
       </Grid>
     </div>
   </main>
