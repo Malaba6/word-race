@@ -22,12 +22,12 @@ export const AppBarLayout = (props) => {
 
   return <>
     <Paper className={classes.mainPaper}>
-    <Nav {...props} />
-    <div className={classes.root}>
-      <SideBar tab={tab} />
-      { children }
-    </div>
-  </Paper>
+      <Nav {...props} />
+      <div className={classes.root}>
+        <SideBar tab={tab} />
+        { children }
+      </div>
+    </Paper>
   </>
 }
 

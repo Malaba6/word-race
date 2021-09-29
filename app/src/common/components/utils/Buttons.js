@@ -22,11 +22,13 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export const Button = ({label, href}) => {
+export const Button = ({label, href, Icon}) => {
   const classes = useStyles()
 
   return <Link href={href || ''} passHref>
-    <Btn color='primary' {...{
+    <Btn color='primary' startIcon={Icon
+      ? <Icon fontSize='large' />
+      : undefined} {...{
       style: {
         border: 'solid #2196f3 thin',
         padding: '0.5em 1em',
@@ -44,10 +46,9 @@ export const AuthButton = ({ label, href }) => {
   const classes = useStyles()
 
   return <Link href={href || ''} passHref>
-    <Btn key={label} classes={{text: classes.authButton}}
+    <Btn key={label} className={classes.authButton}
       {...{
         color: 'secondary',
-        className: classes.authButton,
         variant: 'outlined'
       }} >
         {label}
@@ -57,7 +58,14 @@ export const AuthButton = ({ label, href }) => {
 
 Button.propTypes = {
   label: PropTypes.string,
-  href: PropTypes.string
+  href: PropTypes.string,
+  Icon: PropTypes.shape({
+    $$typeof: PropTypes.symbol,
+    type: PropTypes.shape({
+      $$typeof: PropTypes.symbol,
+      render: PropTypes.func
+    })
+  })
 }
 AuthButton.propTypes = {
   label: PropTypes.string,

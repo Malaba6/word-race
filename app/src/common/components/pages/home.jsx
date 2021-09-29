@@ -4,24 +4,24 @@ import {
   ListItemText, Typography
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { Info, StarBorder } from '@material-ui/icons'
+import { StarBorder } from '@material-ui/icons'
 import * as s from '../styles/nav.module.css'
 import { Button, AuthButton } from '../utils/Buttons'
+import HowToPlay from '../shared/HowToPlay'
 
 const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     border: 'none',
     boxShadow: 'none',
-    height: '100vh',
-    
+    height: '100vh', 
   },
   callToAction: {
     height: '100vh',
     border: 'none',
     boxShadow: 'none'
   },
-  mainrapper: {
+  mainWrapper: {
     padding: theme.spacing(6),
     '@media (max-width: 900px)': {
       padding: theme.spacing(0,1)
@@ -81,7 +81,7 @@ export const Home = () => {
   return <main className={classes.content}>
     <div className={s.homeWrapper}>
       <Grid container item
-        className={classes.mainrapper}>
+        className={classes.mainWrapper}>
         <Grid
           item
           direction='column' xs={12} sm={12} md={8}
@@ -89,7 +89,6 @@ export const Home = () => {
           <Grid
             className={s.racetext}
             container item
-            // justifyContent='center'
             >
             WORD RACE
           </Grid>
@@ -174,33 +173,9 @@ export const Home = () => {
             </Card>
           </Grid>
         </Grid>
-        <Grid item xs={4}
-          className={classes.infoWrapper}>
-          <Card className={classes.infoCard}>
-            <Container>
-              <Grid container 
-                className={classes.howToPlayTitle}>
-                <Grid xs={4}>
-                  <Info />
-                </Grid>
-                <Grid container xs={8}>
-                  <Typography variant='h5' component='h6'>
-                    How to play
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Typography>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim debitis quo mollitia cupiditate, natus voluptas architecto dolores quasi aut, veniam, exercitationem recusandae labore rem quibusdam eum impedit iure voluptatum fuga!
-              </Typography>
-              <Typography variant='h6' component='h6'>
-                Bonus
-              </Typography>
-              <Typography>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit ea nesciunt, culpa minima voluptatibus ratione eum quam maiores vel, quas ipsa temporibus explicabo omnis magni! Commodi adipisci aliquid facilis cumque?
-              </Typography>
-            </Container>
-          </Card>
-        </Grid>
+        <HowToPlay
+          xs={4}
+          isHiden />
       </Grid>
     </div>
   </main>
