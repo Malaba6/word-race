@@ -1,11 +1,10 @@
-import { makeStyles } from "@material-ui/core"
+import { makeStyles, useTheme } from "@material-ui/core"
 import {
   Typography, Box, Button,
 } from "@mui/material"
 import { useFormik } from 'formik'
 import PropTypes from "prop-types"
 import * as yup from 'yup'
-import { useState } from "react"
 import Link from 'next/link'
 import { PasswordField, TextField } from "../utils/textField"
 
@@ -17,17 +16,16 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     minHeight: '100vh',
     background: theme.palette.secondary.secondary,
-    // color: '#fff'
   }
 }))
 
-const validationSchema = yup.object({
-  firstName: yup
+const signupSchema = yup.object({
+  firstname: yup
     .string('First Name')
     .min(2, 'Name must be at least 3 characters!')
     .max(50, 'Name is too long!')
     .required('First Name is required!'),
-  lastName: yup
+  lastname: yup
     .string('Last Name')
     .min(2, 'Name must be at least 3 characters!')
     .max(50, 'Name is too long!')
@@ -35,8 +33,7 @@ const validationSchema = yup.object({
   username: yup
     .string('Username')
     .min(2, 'Name must be at least 3 characters!')
-    .max(50, 'Name is too long!')
-    .required('Username is required!'),
+    .max(50, 'Name is too long!'),
   email: yup
     .string('Email')
     .email('Enter a valid email!')
@@ -45,34 +42,46 @@ const validationSchema = yup.object({
     .string('Password')
     .min(8, 'Password should be of minimum 8 characters length!')
     .required('Password is required!'),
-  confirmPassword: yup
+  confirmpassword: yup
     .string('Confirm Password')
     .oneOf([yup.ref('password'), null], 'Passwords must match')
+})
+
+const loginSchema = yup.object({
+  email: yup
+    .string('Email')
+    .email('Enter a valid email!')
+    .required('Email is required!'),
+  password: yup
+    .string('Password')
+    .min(8, 'Password should be of minimum 8 characters length!')
+    .required('Password is required!')
 })
 
 export const Form = ({
   label, href, action, isLoginForm, isSignupForm
 }) => {
   const classes = useStyles()
+  const theme = useTheme()
+  const validationSchema = isSignupForm
+    ? signupSchema
+    : loginSchema
+
+  const isEmpty = obj => !Object.values(obj).filter(e => typeof e !== 'undefined').length;
+  
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
+      firstname: '',
+      lastname: '',
       username: '',
       email: '',
       password: '',
-      confirmPassword: '',
+      confirmpassword: '',
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log('*****')
       console.log(JSON.stringify(values, null, 2))
     },
-    handleMyFunc: (values) => (e) => {
-      e.preventDefault()
-      console.log('*****')
-      console.log(JSON.stringify(values, null, 2))
-    }
   })
 
   return <div className={classes.root}>
@@ -95,20 +104,20 @@ export const Form = ({
           width: '80%', margin: '0 auto', mt: 5
         }}
         onSubmit={formik.handleSubmit}>
-          {/* {isSignupForm && (
+          {isSignupForm && (
             <>
               <TextField
                 name='firstname'
                 label='First Name'
                 formik={formik}
                 isSignupForm={isSignupForm}
-                formikProp='firstName' />
+                formikProp='firstname' />
               <TextField
                 name='lastname'
                 label='Last Name'
                 formik={formik}
                 isSignupForm={isSignupForm}
-                formikProp='lastName' />
+                formikProp='lastname' />
               <TextField
                 name='username'
                 label='Userame'
@@ -116,11 +125,12 @@ export const Form = ({
                 isSignupForm={isSignupForm}
                 formikProp='username' />
             </>
-          )} */}
+          )}
     
         <TextField
           name='email'
           label='Email'
+          type='email'
           formik={formik}
           isSignupForm={isSignupForm}
           formikProp='email' />
@@ -136,7 +146,7 @@ export const Form = ({
           name='confirmpassword'
           formik={formik}
           isSignupForm={isSignupForm}
-          formikProp='confirmPassword' />
+          formikProp='confirmpassword' />
         }
 
         {isLoginForm && <Link href='/#' passHref>
@@ -153,11 +163,17 @@ export const Form = ({
             Forgot Password?
           </Typography>
         </Link>}
-        <Button sx={{
-          background: '#333',
-          mb: 1,
-          mt: 3
-        }} variant="contained" fullWidth type="submit">
+        <Button
+          disabled={!isEmpty(formik.errors)}
+          sx={{
+            background: '#333',
+            mb: 1,
+            mt: 3,
+            '&:hover': {
+              backgroundColor: '#2196f3',
+              boxShadow: theme.shadows[4]
+            }
+          }} variant="contained" fullWidth type="submit">
           {label}
         </Button>
         <Link href={href} passHref>
@@ -176,6 +192,14 @@ export const Form = ({
       </Box>
     </Box>
   </div>
+}
+
+Form.propTypes = {
+  label: PropTypes.string,
+  href: PropTypes.string,
+  action: PropTypes.string,
+  isLoginForm: PropTypes.bool,
+  isSignupForm: PropTypes.bool
 }
 
 export default Form

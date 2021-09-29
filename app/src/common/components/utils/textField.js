@@ -3,7 +3,8 @@ import {
   IconButton, TextField as Field, FormHelperText
 } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { useState } from 'react';
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 export const PasswordField = ({
   label, name, formik, formikProp
@@ -55,8 +56,7 @@ export const PasswordField = ({
 
 export const TextField = ({
   name, label, formik, type, formikProp, isSignupForm
-}) =>
-  <Field
+}) => <Field
     fullWidth
     id={name}
     name={name}
@@ -68,3 +68,32 @@ export const TextField = ({
     error={formik.touched[formikProp] && Boolean(formik.errors[formikProp] )}
     helperText={formik.touched[formikProp]  && formik.errors[formikProp]}
   />
+
+TextField.propTypes = {
+  name: PropTypes.string,
+  label: PropTypes.string,
+  formik: PropTypes.objectOf(PropTypes.oneOfType([
+    PropTypes.string, PropTypes.objectOf(
+      PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.bool
+      ])
+    )
+  ])),
+  type: PropTypes.string,
+  formikProp: PropTypes.string,
+  isSignupForm: PropTypes.string
+}
+PasswordField.propTypes = {
+  name: PropTypes.string,
+  label: PropTypes.string,
+  formik: PropTypes.objectOf(PropTypes.oneOfType([
+    PropTypes.string, PropTypes.objectOf(
+      PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.bool
+      ])
+    )
+  ])),
+  formikProp: PropTypes.string,
+}
