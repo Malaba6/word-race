@@ -4,11 +4,13 @@ import {
   makeStyles, ListItemIcon, ListItemText, Typography,
   Grid, Avatar, List, ListItem
  } from '@material-ui/core'
+
 import { Person as PersonIcon, AccountCircleRounded,
   ExitToApp
 } from '@material-ui/icons'
 // import PropTypes from 'prop-types'
 import { useViewport } from '../hooks/viewport'
+import { useAuth } from '../../../context/AuthContext'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const UserMenu = ({ userName='Guest', avatar }) => {
   const isMobileView = useViewport()
+  const { state: { isAuthenticated }} = useAuth()
 
   const [anchorEl, setAnchorEl] = useState(null)
   const classes = useStyles();
@@ -71,12 +74,12 @@ export const UserMenu = ({ userName='Guest', avatar }) => {
               <ListItemText>Profile</ListItemText>
             </MenuItem>
             
-            <MenuItem>
+            {!isAuthenticated && <MenuItem>
               <ListItemIcon>
                 <ExitToApp />
               </ListItemIcon>
               <ListItemText>Logout</ListItemText>
-            </MenuItem>
+            </MenuItem>}
         </Menu>
       </Collapse>
     </> 

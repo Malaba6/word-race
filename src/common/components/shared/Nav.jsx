@@ -22,6 +22,7 @@ import { AuthButton } from '../utils/Buttons'
 import { UserMenu } from '../utils/userMenu'
 import {theme} from '../../../../styles/theme'
 import { headers } from '../utils/constants'
+import { useAuth } from '../../../context/AuthContext'
 
 const HideOnScroll = ({ children, window }) => {
   const trigger = useScrollTrigger({ target: window });
@@ -123,28 +124,32 @@ const useStyles = makeStyles(() => (
   }
 ))
 
-const GetMenuButtons = ({classes}) => <div
-  className={classes.deskMenu}>
-  {headers.map(({label, href}) => {
-    switch(label) {
-      case 'Login':
-        return <AuthButton key={label} label='Login' />
-      case 'Sign Up':
-        return <AuthButton key={label} label='Sign Up' />
-      default:
-        return <Link href={href} passHref>
-          <Button disableRipple disableFocusRipple key={label}
-            {...{
-              color: 'inherit',
-              className: classes.menuButton,
-            }}>
-              {label}
-          </Button>
-        </Link>
-      }
-  })}
-  <UserMenu />
-</div>
+const GetMenuButtons = ({classes}) => {
+  const { state: { isAuthenticated }} = useAuth()
+  
+  return <div
+    className={classes.deskMenu}>
+    {headers.map(({label, href}) => {
+      switch(label) {
+        case 'Login':
+          return !isAuthenticated && <AuthButton key={label} label='Login' />
+        case 'Sign Up':
+          return !isAuthenticated && <AuthButton key={label} label='Sign Up' />
+        default:
+          return <Link href={href} passHref>
+            <Button disableRipple disableFocusRipple key={label}
+              {...{
+                color: 'inherit',
+                className: classes.menuButton,
+              }}>
+                {label}
+            </Button>
+          </Link>
+        }
+    })}
+    <UserMenu />
+  </div>
+}
 
 const Avatar = ({ classes }) => <Grid
   container
@@ -165,7 +170,7 @@ const Avatar = ({ classes }) => <Grid
   </Grid>
 </Grid>
 
-const DisplayDesktop = () => {
+const DisplayDesktop = ({ isAuthenticated }) => {
   const classes = useStyles()
 
   return <Toolbar className={clsx(classes.toolBar, classes.deskMenu)}>
@@ -244,7 +249,8 @@ const DisplayMobile = ({setState, isDrawerOpen}) => {
 }
 
 export const Nav = (props) => {
-
+  const { state: { isAuthenticated } } = useAuth()
+  console.log('___ is Authed ', isAuthenticated)
   const { root } = useStyles()
 
   const [state, setState] = useState({
@@ -260,7 +266,7 @@ export const Nav = (props) => {
         <DisplayMobile
           isDrawerOpen={isDrawerOpen}
           setState={setState} />
-        <DisplayDesktop />
+        <DisplayDesktop isAuthenticated={isAuthenticated} />
       </AppBar>
     </HideOnScroll>
   </>

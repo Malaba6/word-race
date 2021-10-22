@@ -87,13 +87,13 @@ const validationRules = {
     }),
   
   password: Joi.string()
-    .regex(/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/)
+    .regex(/^.{8,}$/)
     .required()
     .error(errors => {
       errors.forEach(error => {
         switch(error.code) {
           case 'string.pattern.base':
-            error.message = `Password must be at least 8 characters long and contain at least one upper and lowercase, a number and character`
+            error.message = `Password should be of minimum 8 characters length!`
               break
           case 'string.base':
             error.message = 'Password must be string'

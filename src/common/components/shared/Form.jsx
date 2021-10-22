@@ -1,12 +1,16 @@
 import { makeStyles, useTheme } from "@material-ui/core"
+import { ToastContainer } from "react-toastify"
 import {
   Typography, Box, Button,
 } from "@mui/material"
+import { config } from 'dotenv'
 import { useFormik } from 'formik'
 import PropTypes from "prop-types"
 import * as yup from 'yup'
 import Link from 'next/link'
 import { PasswordField, TextField } from "../utils/textField"
+
+config()
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,12 +24,12 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const signupSchema = yup.object({
-  firstname: yup
+  firstName: yup
     .string('First Name')
     .min(2, 'Name must be at least 3 characters!')
     .max(50, 'Name is too long!')
     .required('First Name is required!'),
-  lastname: yup
+  lastName: yup
     .string('Last Name')
     .min(2, 'Name must be at least 3 characters!')
     .max(50, 'Name is too long!')
@@ -33,7 +37,8 @@ const signupSchema = yup.object({
   username: yup
     .string('Username')
     .min(2, 'Name must be at least 3 characters!')
-    .max(50, 'Name is too long!'),
+    .max(50, 'Name is too long!')
+    .required('Username is required!'),
   email: yup
     .string('Email')
     .email('Enter a valid email!')
@@ -42,16 +47,16 @@ const signupSchema = yup.object({
     .string('Password')
     .min(8, 'Password should be of minimum 8 characters length!')
     .required('Password is required!'),
-  confirmpassword: yup
+  confirmPassword: yup
     .string('Confirm Password')
+    .required('Confirm Password is required!')
     .oneOf([yup.ref('password'), null], 'Passwords must match')
 })
 
 const loginSchema = yup.object({
-  email: yup
-    .string('Email')
-    .email('Enter a valid email!')
-    .required('Email is required!'),
+  user: yup
+    .string('User')
+    .required('Email or Username is required!'),
   password: yup
     .string('Password')
     .min(8, 'Password should be of minimum 8 characters length!')
@@ -59,28 +64,25 @@ const loginSchema = yup.object({
 })
 
 export const Form = ({
-  label, href, action, isLoginForm, isSignupForm
+  label, href, action, isLoginForm, isSignupForm,
+  isLoading, handleSubmit, initialValues
 }) => {
   const classes = useStyles()
   const theme = useTheme()
+
   const validationSchema = isSignupForm
     ? signupSchema
     : loginSchema
 
-  const isEmpty = obj => !Object.values(obj).filter(e => typeof e !== 'undefined').length;
+  // Disable submit button Check if validation fails
+  const isEmpty = obj => !Object.values(obj)
+    .filter(e => typeof e !== 'undefined').length;
   
   const formik = useFormik({
-    initialValues: {
-      firstname: '',
-      lastname: '',
-      username: '',
-      email: '',
-      password: '',
-      confirmpassword: '',
-    },
+    initialValues,
     validationSchema,
     onSubmit: (values) => {
-      console.log(JSON.stringify(values, null, 2))
+      handleSubmit(values)
     },
   })
 
@@ -107,20 +109,20 @@ export const Form = ({
           {isSignupForm && (
             <>
               <TextField
-                name='firstname'
-                label='First Name'
+                name='firstName'
+                label='First Name*'
                 formik={formik}
                 isSignupForm={isSignupForm}
-                formikProp='firstname' />
+                formikProp='firstName' />
               <TextField
-                name='lastname'
-                label='Last Name'
+                name='lastName'
+                label='Last Name*'
                 formik={formik}
                 isSignupForm={isSignupForm}
-                formikProp='lastname' />
+                formikProp='lastName' />
               <TextField
                 name='username'
-                label='Userame'
+                label='Username*'
                 formik={formik}
                 isSignupForm={isSignupForm}
                 formikProp='username' />
@@ -128,25 +130,26 @@ export const Form = ({
           )}
     
         <TextField
-          name='email'
-          label='Email'
-          type='email'
+          name={isSignupForm ? 'email' : 'user'}
+          label={isSignupForm
+            ? 'Email*' : 'Email or Username'}
+          type={isSignupForm ? 'email' : 'text'}
           formik={formik}
           isSignupForm={isSignupForm}
-          formikProp='email' />
+          formikProp={isSignupForm ? 'email' : 'user'} />
         <PasswordField
-          label='Password'
+          label='Password*'
           name='password'
           formikProp='password'
           isSignupForm={isSignupForm}
           formik={formik} />
         
         {isSignupForm && <PasswordField
-          label='Confirm Password'
-          name='confirmpassword'
+          label='Confirm Password*'
+          name='confirmPassword'
           formik={formik}
           isSignupForm={isSignupForm}
-          formikProp='confirmpassword' />
+          formikProp='confirmPassword' />
         }
 
         {isLoginForm && <Link href='/#' passHref>
@@ -164,7 +167,7 @@ export const Form = ({
           </Typography>
         </Link>}
         <Button
-          disabled={!isEmpty(formik.errors)}
+          disabled={!isEmpty(formik.errors) || isLoading}
           sx={{
             background: '#333',
             mb: 1,
@@ -174,7 +177,7 @@ export const Form = ({
               boxShadow: theme.shadows[4]
             }
           }} variant="contained" fullWidth type="submit">
-          {label}
+          {isLoading ? 'LOADING...' : label}
         </Button>
         <Link href={href} passHref>
           <Typography
@@ -191,6 +194,8 @@ export const Form = ({
         </Link>
       </Box>
     </Box>
+    <ToastContainer
+      position="bottom-right" />
   </div>
 }
 
@@ -199,7 +204,10 @@ Form.propTypes = {
   href: PropTypes.string,
   action: PropTypes.string,
   isLoginForm: PropTypes.bool,
-  isSignupForm: PropTypes.bool
+  isSignupForm: PropTypes.bool,
+  isLoading: PropTypes.bool,
+  handleSubmit: PropTypes.func,
+  initialValues: PropTypes.objectOf(PropTypes.string)
 }
 
 export default Form

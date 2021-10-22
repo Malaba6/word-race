@@ -2,7 +2,7 @@ import cookie from 'cookie'
 import { Op } from 'sequelize'
 import db, { RefreshToken, user } from '../../../../sequelize/models'
 import { genToken } from '../../../common/helpers/auth'
-import withAuth from '../../../common/middleware/withAuth'
+// import withAuth from '../../../common/middleware/withAuth'
 
 const handler = async (req, res) => {
   if (req.method !== 'POST') {
@@ -66,4 +66,4 @@ const handler = async (req, res) => {
   }
 }
 
-export default withAuth(handler)
+export default handler

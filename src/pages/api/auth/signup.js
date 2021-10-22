@@ -1,6 +1,6 @@
 import { hashedPassword } from '../../../common/helpers/auth'
 import { withValidation } from '../../../common/middleware/withValidation'
-import { signupUserSchema } from '../../../../app/src/common/helpers/schema/validationRules'
+import { signupUserSchema } from '../../../common/helpers/schema/validationRules'
 import db, { user } from '../../../../sequelize/models'
 
 async function handler(req, res) {
