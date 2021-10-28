@@ -4,13 +4,14 @@ import {
 } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 import clsx from 'clsx'
+import { useEffect } from "react"
 import {
-  Panel, StackSpace, arrayToObject as words,
+  Panel, StackSpace,
   KeyBoard, Config
 } from "../utils/panel"
-import { keys, sentences } from "../utils/constants"
+import { keys } from "../utils/constants"
 import * as s from '../styles/home.module.css'
-
+import { useTyping } from "../../../context/TypingContext"
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -65,6 +66,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '3px',
     background: '#fff',
     color: theme.palette.text.dark,
+    display: 'flex',
+    width: 'fit-content'
   },
   word: {
     fontSize: '2rem',
@@ -97,6 +100,18 @@ const useStyles = makeStyles((theme) => ({
     '@media (max-width: 900px)': {
       borderRadius: '2px',
     }
+  },
+  targetKey: {
+    background: '#FFB61E'
+  },
+  wrongKey: {
+    border: 'solid 2px black'
+  },
+  typedKeys: {
+    color: '#7DB700'
+  },
+  wordFinished: {
+    color: '#42A7DF'
   },
   keyBoard: {
     margin: '0 auto',
@@ -170,23 +185,35 @@ const useStyles = makeStyles((theme) => ({
 
 export const Race = () => {
   const classes = useStyles()
+  const {
+    state: { level, score, multiplier, toType },
+    setState, state
+  } = useTyping()
+
+  useEffect(() => {
+    setState({
+      ...state,
+      keyTarget: toType[0]
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toType, setState])
 
   const items = [
     {
       s: clsx(s.rectButton),
-      value: '3',
+      value: level,
       label: 'LEVEL',
       classes
     },
     {
       s: clsx(s.rectButton, s.trapButton),
-      value: '420',
+      value: score,
       label: 'SCORE',
       classes
     },
     {
       s: clsx(s.rectButton, s.paraButton),
-      value: '4X',
+      value: `${multiplier}X`,
       classes
     }
   ]
@@ -208,9 +235,7 @@ export const Race = () => {
                 classes={item.classes} />
             </Grid>)}
         </Grid>
-        <StackSpace
-          classes={classes}
-          words={words(sentences[0])} />
+        <StackSpace classes={classes} />
         <KeyBoard
           keys={keys}
           classes={classes}/>

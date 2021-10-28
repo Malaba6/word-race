@@ -66,6 +66,9 @@ const useStyles = makeStyles(() => (
     logoFrame: {
       width: '15em',
       alignItems: 'center',
+      '&:hover': {
+        cursor: 'pointer'
+      }
     },
     authButton: {
       marginLeft: '1em',
@@ -125,16 +128,18 @@ const useStyles = makeStyles(() => (
 ))
 
 const GetMenuButtons = ({classes}) => {
-  const { state: { isAuthenticated }} = useAuth()
+  const { state: { isAuthenticated, user }} = useAuth()
   
   return <div
     className={classes.deskMenu}>
     {headers.map(({label, href}) => {
       switch(label) {
         case 'Login':
-          return !isAuthenticated && <AuthButton key={label} label='Login' />
+          return !isAuthenticated
+            && <AuthButton key={label} href='/login' label='Login' />
         case 'Sign Up':
-          return !isAuthenticated && <AuthButton key={label} label='Sign Up' />
+          return !isAuthenticated
+            && <AuthButton key={label} href='/signup' label='Sign Up' />
         default:
           return <Link href={href} passHref>
             <Button disableRipple disableFocusRipple key={label}
@@ -147,30 +152,33 @@ const GetMenuButtons = ({classes}) => {
           </Link>
         }
     })}
-    <UserMenu />
+    <UserMenu username={user?.username} />
   </div>
 }
 
-const Avatar = ({ classes }) => <Grid
-  container
-  alignItems='flex-start'
-  className={classes.logoFrame}>
-  <Grid item xs={3}>
-    <div className={classes.wRaceLogo}>
-      <Image
-        alt='Logo'
-        className={s.logoImg}
-        src={logo} />
-    </div>
-  </Grid>
-  <Grid item xs={9} className={classes.logoTextWrapper}>
-    <Grid className={s.logotext}>
-      WORD RACE
+const Avatar = ({ classes }) => <Link href='/' passHref>
+    <Grid
+      container
+      button
+      alignItems='flex-start'
+      className={classes.logoFrame}>
+      <Grid item xs={3}>
+        <div className={classes.wRaceLogo}>
+          <Image
+            alt='Logo'
+            className={s.logoImg}
+            src={logo} />
+        </div>
+      </Grid>
+      <Grid item xs={9} className={classes.logoTextWrapper}>
+        <Grid className={s.logotext}>
+          WORD RACE
+        </Grid>
+      </Grid>
     </Grid>
-  </Grid>
-</Grid>
+  </Link>
 
-const DisplayDesktop = ({ isAuthenticated }) => {
+const DisplayDesktop = () => {
   const classes = useStyles()
 
   return <Toolbar className={clsx(classes.toolBar, classes.deskMenu)}>
@@ -181,6 +189,7 @@ const DisplayDesktop = ({ isAuthenticated }) => {
 
 const DisplayMobile = ({setState, isDrawerOpen}) => {
   const classes = useStyles()
+  const { state: { isAuthenticated } } = useAuth()
 
   const handleDrawerOpen = () =>
     setState(prev => ({...prev, isDrawerOpen: true}))
@@ -218,12 +227,12 @@ const DisplayMobile = ({setState, isDrawerOpen}) => {
           {headers.map(({label, href}) =>{
             switch(label) {
             case 'Login':
-              return <ListItem key={label}>
-                  <AuthButton label='Login' />
+              return !isAuthenticated && <ListItem key={label}>
+                  <AuthButton label='Login' href='/login' />
                 </ListItem>
             case 'Sign Up':
-              return <ListItem key={label}>
-                    <AuthButton label='Sign Up' />
+              return !isAuthenticated && <ListItem key={label}>
+                    <AuthButton href='/signup' label='Sign Up' />
                 </ListItem>
             default:
               return <Link href={href} passHref>
@@ -250,7 +259,6 @@ const DisplayMobile = ({setState, isDrawerOpen}) => {
 
 export const Nav = (props) => {
   const { state: { isAuthenticated } } = useAuth()
-  console.log('___ is Authed ', isAuthenticated)
   const { root } = useStyles()
 
   const [state, setState] = useState({

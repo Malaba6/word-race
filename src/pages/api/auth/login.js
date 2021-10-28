@@ -55,7 +55,7 @@ async function handler(req, res) {
     .json({
       message: `Welcome back ${user.username}`,
       data: {
-        accessToken: `Bearer ${userToken}`,
+        accessToken: userToken,
         username: user.username,
         email: user.email
       }

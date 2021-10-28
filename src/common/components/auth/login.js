@@ -30,14 +30,16 @@ export const Login = () => {
     const response = await result.json()
     if (response.data) {
       dispatch({
-        type: 'LOGIN_SUCCESS',
+        type: 'SUCCESS',
         payload: response.data
       })
-      notify('User successfully Created', 'success')
+      notify('Successfully logged in', 'success')
+      localStorage.setItem('token', response.data.accessToken)
+      localStorage.setItem('user', response.data.email)
       router.push('/')
     } else {
       dispatch({
-        type: 'LOGIN_ERROR',
+        type: 'ERROR',
         payload: response.error
       })
       notify(response.error ? response.error : 'Network error!', 'error')

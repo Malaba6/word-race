@@ -35,12 +35,13 @@ const useStyles = makeStyles(() => ({
 }))
 
 const HowToPlay = ({
-  xs, isHiden, setAnchorEl, hasClose
+  xs, isHiden, setAnchorEl, hasClose, setOpen
 }) => {
   const classes = useStyles();
 
   const handleClose = () => {
     setAnchorEl(null)
+    setOpen(false)
   }
 
   return <Grid item xs={xs}
@@ -85,7 +86,8 @@ HowToPlay.propTypes = {
   xs: PropTypes.number,
   isHiden: PropTypes.bool,
   setAnchorEl: PropTypes.func,
-  hasClose: PropTypes.bool
+  hasClose: PropTypes.bool,
+  setOpen: PropTypes.func
 }
 
 export default HowToPlay

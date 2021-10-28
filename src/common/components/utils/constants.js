@@ -35,9 +35,39 @@ export const keys = [
 
 
 export const sentences = [
-  'corona virus is serious and kills',
-  'if you go on typing you will win prizes surprises and many more things that can be won just do what you gotta do',
-  'this sentence should take you less than a minute to type keep typing to improve your typing speed'
+  { author: 'Ellen DeGeneres',
+    quote: 'never follow anyone elses path unless youre in the woods and youre lost and you see a path when by all means follow that path'
+  },
+  { author: 'Bobby Boucher',
+    quote: 'my mama says that alligators are ornery because they got all them teeth and no toothbrush be awesome be a book nut'
+  },
+  { author: "Dory, ‘Finding Dory.’",
+    quote: 'i remember it like it was yesterday of course o dont really remember yesterday all that well he who laughs lasts'
+  },
+  { author: "Roald Dahl",
+    quote: 'so please oh please we beg we pray go throw your tv set away and in its place you can install a lovely bookshelf on the wall all it takes is faith and trust'
+  },
+  { author: "Erma Bombeck",
+    quote: 'have you any idea how many children it takes to turn off one light in the kitchen three tt takes one to say  What light and two more to say i didnt turn it on'
+  },
+  { author: "Erma Bombeck",
+    quote: 'the odds of going to the store for a loaf of bread and coming out with only a loaf of bread are three billion to one even miracles take a little time'
+  },
+  { author: "Unknown",
+    quote: 'preferably the laugh out loud one since as adults we generally dont laugh enough i really thought you already knew mothers words of wisdom answer me dont talk with food in your mouth'
+  },
+  { author: "Erma Bombeck",
+    quote: 'when your mother asks do you want a piece of advice its a mere formality it doesnt matter if you answer yes or no you are going to get it anyway'
+  },
+  { author: "Phyllis Diller",
+    quote: 'cleaning your house while your kids are still growing is like shoveling the sidewalk before it stops snowing the more you give away the more happy you become why fit in when you were born to stand out'
+  },
+  { author: "Alice Munro",
+    quote: 'row row row your boat gently down the stream merrily merrily merrily merrily life is but a dream be kind whenever possible it is always possible the secret of getting ahead is getting started'
+  },
+  { author: "Art Linkletter",
+    quote: 'do a little more than you are paid to give a little more than you have to try a little harder than you want to aim a little higher than you think possible and give a lot of thanks to God for health family and friends'
+  },
 ]
 
 export const configItems = [
@@ -45,12 +75,14 @@ export const configItems = [
     Icon: Settings,
     title: 'LEVEL',
     color: '#42A7DF',
+    name: 'level',
     options: [
       {
-        values: ['Normal', {id: '1', label: 'Level 1'},  {id: '2', label: 'Level 2'}]
+        values: ['Normal', {id: '1', label: 'Level 1 | Easy Level'},
+          {id: '2', label: 'Level 2 | Medium Level'}]
       },
       {
-        values: ['Advanced',  {id: '3', label: 'Level 3'}]
+        values: ['Advanced',  {id: '3', label: 'Level 3 | Hard Level'}]
       }
     ]
   },
@@ -58,17 +90,18 @@ export const configItems = [
     Icon: Speed,
     title: 'WORD APPEARING RATE',
     color: '#7DB700',
-    disabled: true,
+    readOnly: true,
+    name: 'speed',
     options: [
       {
         values: [
           'Slow and Avarage Pace',
-          {id: '1', label: '1 word/sec'},
-          {id: '2', label: '2 words/sec'}
+          {id: '1', label: '1 word/ 2sec'},
+          {id: '2', label: '1 words/sec'}
         ]
       },
       {
-        values: ['Fast',  {id: '3', label: '3 words/sec'}]
+        values: ['Fast',  {id: '3', label: '1 words/.1sec'}]
       }
     ]
   },
@@ -76,17 +109,18 @@ export const configItems = [
     Icon: ListAlt,
     title: 'STACK SPACE LENGTH',
     color: '#8F63D7',
-    disabled: true,
+    readOnly: true,
+    name: 'stack',
     options: [
       {
         values: [
           'Few Words',
-          {id: '1', label: '20 Words'},
-          {id: '2', label: '30 Words'}
+          {id: '1', label: '20 Words + 2 bonus words'},
+          {id: '2', label: '30 Words + 4 bonus words'}
         ]
       },
       {
-        values: ['Many Words',  {id: '3', label: '40 Words'}]
+        values: ['Many Words',  {id: '3', label: '40 Words + 6 bunus words'}]
       }
     ]
   }

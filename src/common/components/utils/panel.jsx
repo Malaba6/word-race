@@ -1,12 +1,17 @@
+/* eslint-disable react/no-array-index-key */
 import { useState } from "react"
 import {
   Grid, Typography, ListSubheader, Container, Popover,
   FormControl, InputLabel, Select, MenuItem, IconButton, Tooltip,
  } from "@material-ui/core"
+ import clsx from 'clsx'
 import { HelpOutline } from "@material-ui/icons"
 import PropTypes from "prop-types"
+import useSound from "use-sound"
 import { configItems } from "./constants"
 import HowToPlay from "../shared/HowToPlay"
+import useKeyPress from '../hooks/keyPress'
+import { useTyping } from '../../../context/TypingContext'
 
 export const Panel = ({
   s, value, label, classes
@@ -27,26 +32,65 @@ export const Panel = ({
   </Grid>
 </div>
 
-const xs = (w) => {
-  if (w.length > 9)  return 3
-  if (w.length > 3) return 2
-  return 1
+/**
+ * 
+ * @param {String} sentence Accepts a sentence and
+ * @returns {Array} of Objects containing word id and value
+ */
+export const arrayToObject = (sentence) => {
+  const words = sentence?.split(' ')
+  let count = 0
+  const newWords = []
+
+  words?.forEach(word => {
+    count += word.length
+    if (count < 32) newWords.push(word)
+  })
+
+  return newWords?.map((e, i) => ({
+    id: i,
+    value: e
+  }))
 }
 
+const WordToLetters = ({
+  word, classes, toType, index, wordFinished, ids:id
+}) => <Typography className={classes.word}>
+      {word.split('').map((letter, i) => 
+        <span
+          key={`${letter}${i}`}
+          className={clsx({
+            [classes.typedKeys]: toType.indexOf(word) === 0
+            && id === 0
+            && i <= index - 1,
+            [classes.wordFinished]: toType.indexOf(word) === 0
+            && id === 0
+            && wordFinished
+        })}>
+          {letter}
+        </span>)}
+    </Typography>
+
 export const StackSpace = ({
-  classes, words
+  classes
 }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [open, setOpen] = useState(true)
+  const { state: 
+    { index, toType, wordFinished }
+  } = useTyping()
+  const words = arrayToObject(toType)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-  };
+    setOpen(true)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpen(false)
+    setAnchorEl(null)
   };
 
-  const open = Boolean(anchorEl);
   const id = open ? 'how-to-play' : undefined;
 
   return <Grid container>
@@ -67,27 +111,33 @@ export const StackSpace = ({
           onClose={handleClose}
           classes={{paper: classes.popover}}
           anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
+            vertical: 'center',
+            horizontal: 'center',
           }}
         >
           <div style={{border: ''}}>
             <HowToPlay
               hasClose
               setAnchorEl={setAnchorEl}
+              setOpen={setOpen}
               handleClose={handleClose} />
           </div>
         </Popover>
       </div>
       <Grid container item direction='row' spacing={2}>
         {words.map(word => 
-        <Grid key={word.id}
-          className={classes.wordContainer} container item
-          xs={xs(word.value)} justifyContent='center'>
-          <Typography className={classes.word}>
-            {word.value}
-          </Typography>
-        </Grid>
+          <Grid key={word.id}
+            className={classes.wordContainer} container item
+            justifyContent='center'
+            >
+              <WordToLetters
+                classes={classes}
+                index={index}
+                toType={toType}
+                wordFinished={wordFinished}
+                ids={word.id}
+                word={word.value} />
+          </Grid>
         )}
       </Grid>
     </div>
@@ -100,6 +150,11 @@ export const KeyBoard = ({
   const row1 = keys.slice(0, 10)
   const row2 = keys.slice(10, 19)
   const row3 = keys.slice(19, 28)
+  const { state:
+    { isTargetPressed, keyPressed, keyTarget }
+  } = useTyping()
+
+  useKeyPress()
 
   const row = (roKeys) => <Grid container item
     direction='row'
@@ -113,7 +168,11 @@ export const KeyBoard = ({
       justifyContent='center'
       key={ro.id}>
         {ro.id !== 27
-        ? <Container className={classes.key}>
+        ? <Container className={clsx(classes.key, {
+          [classes.targetKey]: ro.label === keyTarget?.toLowerCase(),
+          [classes.wrongKey]: ro.label === keyPressed?.toLowerCase()
+            && !isTargetPressed
+        })}>
             <Typography
               variant='h4'
               component='h4'
@@ -140,9 +199,10 @@ export const KeyBoard = ({
 }
 
 const ConfigMenu = ({
-  classes, item, st, handleChange
+  classes, item, handleChange
 }) => {
-  const { Icon } = item
+  const { Icon, name, readOnly } = item
+  const {state: { level }} = useTyping()
 
   return <Grid container item md={4} xs={12} justifyContent='flex-start' >
     <FormControl className={classes.formControl}>
@@ -163,10 +223,10 @@ const ConfigMenu = ({
         classes={{
           select: classes.select,
         }}
-        // disabled={item.disabled}
-        value={st.level}
+        value={level}
         inputProps={{
-          name: 'level'
+          name,
+          readOnly 
         }}
         onChange={handleChange}
         style={{ marginTop: '2em'}}
@@ -189,15 +249,34 @@ const ConfigMenu = ({
 export const Config = ({
   classes,
 }) => {
-  const [state, setState] = useState({})
+  const { state, setState } = useTyping()
+  const [play] = useSound('/menu.mp3', {
+    volume: 0.15
+  })
 
   const handleChange = (e) => {
-    const { name } = e.target
-
+    let stack
+    let speed
+    switch (e.target.value || '') {
+      case '1':
+        stack = 20
+        speed = 2
+        break;
+      case '3':
+        stack = 40
+        speed = 0
+        break
+      default:
+        stack = 30
+        speed = 1
+    }
     setState({
       ...state,
-      [name]: e.target.value
+      level: e.target.value,
+      stack,
+      speed
     })
+    play()
   }
 
   return <Grid container
@@ -205,29 +284,14 @@ export const Config = ({
     {configItems.map(item => 
       <ConfigMenu 
         item={item}
-        st={state}
         classes={classes}
         handleChange={handleChange} />)}
   </Grid>
 }
 
-export const arrayToObject = (a) => {
-  const words = a.split(' ')
-  let count = 0
-  const newWords = []
-  words.forEach(word => {
-    count += word.length
-    if (count < 31) newWords.push(word)
-  })
-  return newWords.map((e, i) => ({
-    id: i,
-    value: e
-  }))
-}
-
 Panel.propTypes = {
   s: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   label: PropTypes.string,
   classes: PropTypes.objectOf(PropTypes.string),
 }
@@ -235,11 +299,17 @@ Panel.defaultProps = {
   label: ''
 }
 StackSpace.propTypes = {
+  classes: PropTypes.objectOf(PropTypes.string)
+}
+
+WordToLetters.propTypes = {
+  ids: PropTypes.number,
   classes: PropTypes.objectOf(PropTypes.string),
-  words: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number,
-    value: PropTypes.string
-  }))
+  word: PropTypes.string,
+  wordFinished: PropTypes.bool, 
+  toType: PropTypes.string,
+  index: PropTypes.number
+
 }
 KeyBoard.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string),
@@ -253,9 +323,10 @@ Config.propTypes = {
 }
 ConfigMenu.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string),
-  st: PropTypes.objectOf(PropTypes.string),
   handleChange: PropTypes.func,
   item: PropTypes.shape({
+    name: PropTypes.string,
+    readOnly: PropTypes.bool,
     Icon: PropTypes.shape({
       $$typeof: PropTypes.symbol,
       type: PropTypes.shape({
